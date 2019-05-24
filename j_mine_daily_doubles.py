@@ -2,16 +2,16 @@ import urllib.request
 import re
 
 # defines empty list for categories to be added to as strings
-categories = []
+dd = []
 
 def category_search(game_id):
     '''
-    Mines the cateogy type from the game Jeopardy! from j-archive.com using regular expressions
+    Mines the locatoin of the daily double from the game Jeopardy! from j-archive.com using regular expressions
     :param game_id: int, the game_id is used to access the individual game itself, the game id denotes the php link
     :return: None, adds values to a list instead when the function is called
     '''
     # defines regular expressions for searching for categories
-    game_question = re.compile(r"class=\"category_name\">(.*)</td>")
+    dd_location = re.compile(r"class=\"category_name\">(.*)</td>") # TODO: Update DD Regex
 
     # data mined from j-archive.com, which some categories are displayed as links to nothing (frustrating)
     # these regexes allow the links to be deconstructed into string
@@ -30,10 +30,10 @@ def category_search(game_id):
 
     # if the link does open, read and decode
     text = connection.read().decode("utf-8")
-    q_findr = re.compile(game_question)
+    d_findr = re.compile(dd_location)
 
     # search for possible matches to categories by recognizing patterns of html code
-    for match in q_findr.finditer(text):
+    for match in d_findr.finditer(text):
         # normally defined category
         ans = (match.group(1))
 
@@ -41,17 +41,17 @@ def category_search(game_id):
         if ("<a" in ans): # note that the "<a" in the beginning of the string allows for faster access when this exists
             inner_findr = re.compile(a_inner)
             for match in inner_findr.finditer(ans):
-                categories.append((match.group(1)))
+                dd.append((match.group(1)))
 
         # in this case, the category is stored as a link and will be deconstructed into string
         elif ("<em" in ans):
             inner_findr = re.compile(e_inner)
             for match in inner_findr.finditer(ans):
-                categories.append((match.group(1)))
+                dd.append((match.group(1)))
 
         # otherwise proceed normally
         else:
-            categories.append(ans)
+            dd.append(ans)
 
 # will search through n number of games
 number_of_games = 100
