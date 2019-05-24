@@ -34,24 +34,8 @@ def category_search(game_id):
 
     # search for possible matches to categories by recognizing patterns of html code
     for match in d_findr.finditer(text):
-        # normally defined category
         ans = (match.group(1))
-
-        # in this case, the category is stored as a link and will be deconstructed into string
-        if ("<a" in ans): # note that the "<a" in the beginning of the string allows for faster access when this exists
-            inner_findr = re.compile(a_inner)
-            for match in inner_findr.finditer(ans):
-                dd.append((match.group(1)))
-
-        # in this case, the category is stored as a link and will be deconstructed into string
-        elif ("<em" in ans):
-            inner_findr = re.compile(e_inner)
-            for match in inner_findr.finditer(ans):
-                dd.append((match.group(1)))
-
-        # otherwise proceed normally
-        else:
-            dd.append(ans)
+        dd.append(ans)
 
 # will search through n number of games
 number_of_games = 100
